@@ -1,0 +1,14 @@
+import ManagedContent from "../components/common/ManagedContent";
+import { useState } from "react";
+import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react";
+import PageHero from "../components/layout/PageHero";
+import { institute as defaults } from "../data/siteData";
+import { readStore } from "../utils/storage";
+import { addStoreItem } from "../utils/storage";
+export default function Contact() {
+  const institute = readStore("settings", [defaults])[0] || defaults;
+  const [form,setForm] = useState({name:"",mobile:"",message:""});
+  const [status,setStatus] = useState("");
+  const submit = async e => { e.preventDefault(); try { await addStoreItem("messages",form); setStatus("Your message has been sent successfully."); setForm({name:"",mobile:"",message:""}); } catch(err) { setStatus(err.message || "Unable to send message. Please try again."); } };
+  return <div className="page-enter"><PageHero title="We are here to help" text="Have a question about classes, courses or admission? Contact BECC." image="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=90"/><section className="section container contact-grid"><div><span className="eyebrow">GET IN TOUCH</span><h2>Let's talk about your learning goals.</h2><p>Connect with the institute for course details, batch information and admission guidance.</p><div className="contact-cards"><a href={`tel:${institute.phone}`}><Phone/><span><small>CALL US</small><b>{institute.phone}</b></span></a><a href={`https://wa.me/91${institute.phone}`} target="_blank" rel="noreferrer"><MessageCircle/><span><small>WHATSAPP</small><b>Chat with BECC</b></span></a><a href={`mailto:${institute.email}`}><Mail/><span><small>EMAIL</small><b>{institute.email}</b></span></a><div><MapPin/><span><small>VISIT US</small><b>{institute.address}</b></span></div><div><Clock/><span><small>CLASS TIMING</small><b>{institute.timings}</b></span></div></div></div><form className="form-card" onSubmit={submit}><div className="form-heading"><span className="eyebrow">SEND A MESSAGE</span><h3>How can we help?</h3></div><label>Your Name<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Enter your name"/></label><label>Mobile Number<input required maxLength="10" value={form.mobile} onChange={e=>setForm({...form,mobile:e.target.value})} placeholder="10-digit mobile number"/></label><label>Message<textarea required rows="4" value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="Write your message"/></label>{status && <p className="form-success">{status}</p>}<button className="submit-button">Send Message ↗</button></form></section><section className="container map-placeholder"><MapPin/><div><b>BECC – Baji Chowk, Sakra, Muzaffarpur</b><p>Map embed can be added after confirming the exact map pin.</p></div></section><ManagedContent section="contact"/></div>;
+}
