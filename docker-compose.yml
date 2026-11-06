@@ -1,0 +1,20 @@
+services:
+  becc-postgres:
+    image: postgres:16-alpine
+    container_name: becc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: becc
+      POSTGRES_PASSWORD: becc_local_dev_password
+      POSTGRES_DB: becc_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - becc_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U becc -d becc_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  becc_postgres_data:
